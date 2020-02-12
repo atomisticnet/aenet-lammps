@@ -9,33 +9,37 @@ The present interface code has been tested with LAMMPS version August 7, 2019.
 
 .. _LAMMPS: https://lammps.sandia.gov/
 
+The interface relies on a serial build of the aenet library for predicting energies and forces and leaves LAMMPS to handle parallelization. Hence the usual MPI and OpenMP implementations of LAMMPS are compatible with this interface.
+
 Prerequisites
 -------------
 
-To be linked with Tinker, ænet has to be compiled as library.  Build the library by running
+A serial aenet library is required and can be compiled by calling either of the following calls, the choice of which depends on whether the user wishes to make use of the openblas library:
 
 .. code-block:: sh
-
+  
+  make -f ./makefiles/Makefile.gfortran_serial lib
   make -f ./makefiles/Makefile.gfortran_openblas_serial lib
 
-in the ænet ``src`` directory.
+in the ænet ``src`` directory. Currently, the interface has not been tested with intel compilers or other dependency configurations.
 
 Building LAMMPS with ænet support
 ---------------------------------
+After compiling the aenet library files and downloading the aenet-LAMMPS interface from this repository:
 
-1. Copy the USER-AENET folder to $LAMMPSSRC/src/
-2. Create the folder $LAMMPSSRC/lib/aenet, $LAMMPSSRC/lib/aenet/include, $LAMMPSSRC/lib/aenet/lib and make sure that
-  - aenet.h is in $LAMMPSSRC/lib/aenet/include/
-  - the necessary library files (i.e. libaenet.a, libaenet.so, liblbfgb.a, liblbfgsb.so) are in $LAMMPSSRC/lib/aenet/lib
-3. In $LAMMPSSRC/src/, run 'make yes-user-aenet' to enable this package
-  - NOTE: this assumes that aenetLib was compiled using Makefile.gfortran_openblas_serial. If this is not the case, then please make modifications to the Install.sh filefound in this folder as needed.
-4. Compile LAMMPS as usual (e.g. 'make mpi')
+1. Copy the USER-AENET folder to $LAMMPSSRC/src/ where $LAMMPSSRC is the path to your LAMMPS codebase
+2. Edit $LAMMPSSRC/src/USER-AENET/Install.sh to make sure that it is consistent with the serial library file that will be used (i.e. modify lines like ‘sed -i -e 's/-lgfortran -lm -ldl -laenet -llbfgsb -lopenblas //' ../Makefile.package’ to contain the necessary libraries)
+3. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
+  - aenet.h to $LAMMPSSRC/lib/aenet/include/
+  - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSSRC/lib/aenet/lib/
+4. In $LAMMPSSRC/src/, run 'make yes-user-aenet' to enable the interface package
+5. Compile LAMMPS as usual (e.g. go to $LAMMPSSRC and call ‘make mpi’)
 
 
 Running LAMMPS simulations using ænet potentials
 ------------------------------------------------
 
-A partial input example for water:
+The aenet library files, as well as any other dependencies, need to be properly loaded (i.e. on the $LD_LIBRARY_PATH). The LAMMPS input script also needs to be configured so as to use the ‘aenet’ pair style and to specify which neural network parameter files to use. A partial example for water is provided below:
 
 .. code-block:: highlight
 
@@ -47,4 +51,7 @@ A partial input example for water:
 
 The user must specify the aenet fits such that the first fit corresponds to element 1 and so on.
 
-The selected LAMMPS units should match the units of the training set data that was fitted by aenet (i.e. if using 'units electron', the aenet training set must have been specified in terms of Bohrs and Hartrees)
+The parameter files (*.ann files) need to be enumerated in a specific order. In the example above element 1 is designated to be oxygen and element 2 is hydrogen. Consequently, the aenet parameter file for oxygen (i.e. O.25t-25t.ann) needs to be specified first and then followed by the parameter file for hydrogen.
+
+The selected LAMMPS units should match the units of the training data that was fitted by aenet. In the example above, ‘electron’ units are used meaning that the aenet potentials were fitted to training data for which the energies were reported in Hartrees and the positions in Bohrs (i.e. atomic units). If instead the training data used electronvolts and Angstroms, then the corresponding LAMMPS units should be ‘metal’.
+
