@@ -28,12 +28,13 @@ Building LAMMPS with ænet support
 After compiling the aenet library files and downloading the aenet-LAMMPS interface from this repository:
 
 1. Copy the USER-AENET folder to $LAMMPSSRC/src/ where $LAMMPSSRC is the path to your LAMMPS codebase
-2. Edit $LAMMPSSRC/src/USER-AENET/Install.sh to make sure that it is consistent with the serial library file that will be used (i.e. modify lines like ‘sed -i -e 's/-lgfortran -lm -ldl -laenet -llbfgsb -lopenblas //' ../Makefile.package’ to contain the necessary libraries)
-3. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
+2. Edit $LAMMPSSRC/src/Makefile by adding ‘user-aenet’ to the ‘PACKUSER’ variable
+3. Edit $LAMMPSSRC/src/USER-AENET/Install.sh to make sure that it is consistent with the serial library file that will be used (i.e. modify lines like ‘sed -i -e 's/-lgfortran -lm -ldl -laenet -llbfgsb -lopenblas //' ../Makefile.package’ to contain the necessary libraries)
+4. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
   - aenet.h to $LAMMPSSRC/lib/aenet/include/
   - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSSRC/lib/aenet/lib/
-4. In $LAMMPSSRC/src/, run 'make yes-user-aenet' to enable the interface package
-5. Compile LAMMPS as usual (e.g. go to $LAMMPSSRC and call ‘make mpi’)
+5. In $LAMMPSSRC/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
+6. Compile LAMMPS as usual (e.g. go to $LAMMPSSRC and call ‘make mpi’)
 
 
 Running LAMMPS simulations using ænet potentials
