@@ -1,6 +1,6 @@
 ### Input Files for Molecular Dynamics (MD) Simulation using the aenet-LAMMPS Interface
 
-* `H.25t-25t.ann-04128`, `O.25t-25t.ann-04128`, 'train.out'
+* `H.25t-25t.ann-04128`, `O.25t-25t.ann-04128`, `train.out`
 
    ANN potential files and associated training output.
 
