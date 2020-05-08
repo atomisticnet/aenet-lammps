@@ -1,0 +1,102 @@
+###############################################################################
+# MD simulation for H2O with NN potential
+###############################################################################
+
+###############################################################################
+# VARIABLES
+###############################################################################
+clear
+variable dt              equal  0.5                                                     # timestep (fs)
+variable intThermo       equal  4                                                       # screen output interval (timesteps)
+variable intRestart      equal  4                                                       # restart file interval (timesteps)
+variable mass1           equal  1.007825                                                # mass for element 1 (H)  (amu)
+variable mass2           equal  15.994915                                               # mass for element 2 (O)  (amu)
+variable nameStartCfg    string "01_Start/firstframe.start"			        # name of the starting configuration file
+variable nameRestart1    string "02_Traj/swap1.res"                                     # name of restart file 1
+variable nameRestart2    string "02_Traj/swap2.res"                                     # name of restart file 2
+variable nameRestartEnd2 string "02_Traj/endcfg_run.res"                                # name of final state restart file
+
+# set initial velocity distribution
+variable initTemp        equal  300.0                                                   # initial temperature (K)
+variable velSeed         equal  4928459                                                 # seed for random number generator
+
+# NVT integrator (Nose-Hoover)
+variable tDamp           equal  1000.0                                                  # thermostat damping factor (fs)
+
+# dump xyz trajectory file
+variable intDumpXYZ      equal  4                                                       # xyz dump file interval (timesteps)
+variable nameDumpXYZ     string "02_Traj/traj.xyz"                                      # xyz file name
+
+# dump velocities trajectory file
+variable intDumpVelos    equal  4                                                       # velocities dump file interval (timesteps)
+variable nameDumpVelos   string "02_Traj/velocities.xyz"                                # velocities file name
+
+# dump forces trajectory file
+variable intDumpForces    equal 4                                                       # forces dump file interval (timesteps)
+variable nameDumpForces   string "02_Traj/forces.xyz"                                    # forces file name
+
+# physical constants
+variable Na              equal 6.02214
+
+# dump thermodynamic properties (temperature, pressure, potential energy, kinetic energy, integrator quantity)
+variable intTD           equal  4                                                       # thermodynamics dump file interval (timesteps)
+variable varVolume       equal  vol                                                     # variable required to print volume
+variable varKE           equal  ke                                                      # variable required to print kinetic energy
+variable varDensity      equal mass(all)/vol*10/${Na}
+variable varCell         equal  lx
+variable intMomentum     equal  100
+###############################################################################
+# SETUP
+###############################################################################
+units electron
+boundary p p p                                                                          # set periodic boundary conditions
+atom_style atomic                                                                       # set atomic style for particles
+read_data ${nameStartCfg}                                                               # read start configuration
+reset_timestep 0
+
+#
+mass 1 ${mass1}                                                                         # set mass for element 1
+mass 2 ${mass2}                                                                         # set mass for element 2
+pair_style aenet H.25t-25t.ann-04128 O.25t-25t.ann-04128 
+pair_coeff * *
+
+timestep ${dt}                                                                          # set timestep
+restart ${intRestart} ${nameRestart1} ${nameRestart2}                                   # write alternating binary restart files
+dump XYZ all xyz ${intDumpXYZ} ${nameDumpXYZ}                                           # set up xyz dump
+dump_modify XYZ first yes sort id                                                       # modify xyz dump
+dump VELOS all custom ${intDumpVelos} ${nameDumpVelos} type vx vy vz                    # set up velos dump
+dump_modify VELOS first yes sort id                                                     # modify velos dump
+dump FORCES all custom ${intDumpForces} ${nameDumpForces} type fx fy fz                 # set up forces dump
+dump_modify FORCES first yes sort id                                                    # modify forces dump
+thermo ${intThermo}                                                                     # set screen output
+###############################################################################
+# SIMULATION
+###############################################################################
+# run at 300K for 100 ps
+reset_timestep 0
+variable numSteps        equal  200000                                                  # total number of simulation timesteps (timesteps)
+variable startTemp       equal  300.0                                                   # starting temperature for thermostat (K)
+variable stopTemp        equal  300.0                                                   # final temperature for thermostat (K)
+velocity all create ${initTemp} ${velSeed}                                              # create initial velocities
+fix INT all nve										# set up integrator
+fix THER all temp/csvr ${startTemp} ${stopTemp} ${tDamp} 54324				# set up thermostat
+fix MOMENTUM all momentum ${intMomentum} linear 1 1 1                                   # periodically reset total momentum
+compute thermo2_temp all temp
+variable nameTD_frames  string "02_Traj/analysis_frames.dat"				# thermodynamics file name
+fix AVE_TD_frames all ave/time ${intTD} 1 ${intTD} c_thermo2_temp c_thermo_press v_varCell v_varVolume c_thermo_pe v_varDensity v_varKE file ${nameTD_frames} mode scalar format %18.8f      # set up thermodynamic properties output
+variable nameTD_cummul string "02_Traj/analysis_cummul.dat"				# thermodynamics file name
+fix AVE_TD_cummul all ave/time ${intTD} 1 ${intTD} c_thermo2_temp c_thermo_press v_varCell v_varVolume c_thermo_pe v_varDensity v_varKE file ${nameTD_cummul} ave running format %18.8f      # set up thermodynamic properties output
+run ${numSteps}                                                                         # RUN SIMULATION
+write_restart ${nameRestartEnd2}                                                        # write final configuration (binary)
+###############################################################################
+# CLEAN UP
+###############################################################################
+undump XYZ
+undump VELOS
+undump FORCES
+unfix AVE_TD_frames
+unfix AVE_TD_cummul
+unfix MOMENTUM
+unfix THER
+unfix INT
+###############################################################################
