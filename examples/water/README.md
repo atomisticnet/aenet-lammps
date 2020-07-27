@@ -1,6 +1,6 @@
 ### Input Files for Molecular Dynamics (MD) Simulation using the aenet-LAMMPS Interface
 
-* `H.25t-25t.ann-04128`, `O.25t-25t.ann-04128`, `train.out`
+* `H.25t-25t.ann-03649`, `O.25t-25t.ann-03640`, `train.out`
 
    ANN potential files and associated training output.
 
@@ -12,8 +12,8 @@
 
    LAMMPS input file with parameters for the MD simulation. Configured to output
    trajectory, velocities, forces, and energies to files found in 02_Traj/ and
-   to run a simulation at 300K for 100ps.
+   to run a simulation at 300K for 200ps.
 
 * `02_Traj/`
 
-  Contains outputs for a reference run using these same ANN potential files.
+  Contains outputs (100 steps only) for a reference run using these same ANN potential files.

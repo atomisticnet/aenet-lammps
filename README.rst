@@ -44,9 +44,9 @@ The aenet library files, as well as any other dependencies, need to be properly 
 
 .. code-block:: highlight
 
-  units electron
-  mass 1 15.999491
-  mass 2  1.007825
+  units metal
+  mass 1  1.007825
+  mass 2 15.999491
   pair_style aenet O.25t-25t.ann H.25t-25t.ann
   pair_coeff * *
 
@@ -54,5 +54,5 @@ The user must specify the aenet fits such that the first fit corresponds to elem
 
 The parameter files (*.ann files) need to be enumerated in a specific order. In the example above element 1 is designated to be oxygen and element 2 is hydrogen. Consequently, the aenet parameter file for oxygen (i.e. O.25t-25t.ann) needs to be specified first and then followed by the parameter file for hydrogen.
 
-The selected LAMMPS units should match the units of the training data that was fitted by aenet. In the example above, ‘electron’ units are used meaning that the aenet potentials were fitted to training data for which the energies were reported in Hartrees and the positions in Bohrs (i.e. atomic units). If instead the training data used electronvolts and Angstroms, then the corresponding LAMMPS units should be ‘metal’.
+The selected LAMMPS units should match the units of the training data that was fitted by aenet. In the example above, ‘metal’ units are used meaning that the aenet potentials were fitted to training data for which the energies were reported in electron-volts and the positions in Angstroms. If instead the training data used Hartrees and Bohrs, then the corresponding LAMMPS units should be ‘electron’.
 
