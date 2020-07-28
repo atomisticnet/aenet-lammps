@@ -14,14 +14,15 @@ The interface relies on a serial build of the aenet library for predicting energ
 Prerequisites
 -------------
 
-A serial aenet library is required and can be compiled by calling either of the following calls, the choice of which depends on whether the user wishes to make use of the openblas library:
+A serial aenet library is required and can be compiled by calling one of the following calls:
 
 .. code-block:: sh
   
   make -f ./makefiles/Makefile.gfortran_serial lib
   make -f ./makefiles/Makefile.gfortran_openblas_serial lib
+  make -f ./makefiles/Makefile.ifort_serial lib
 
-in the ænet ``src`` directory. Currently, the interface has not been tested with intel compilers or other dependency configurations.
+in the ænet ``src`` directory.
 
 Building LAMMPS with ænet support
 ---------------------------------
@@ -29,7 +30,8 @@ After compiling the aenet library files and downloading the aenet-LAMMPS interfa
 
 1. Copy the USER-AENET folder to $LAMMPSSRC/src/ where $LAMMPSSRC is the path to your LAMMPS codebase
 2. Edit $LAMMPSSRC/src/Makefile by adding ‘user-aenet’ to the ‘PACKUSER’ variable
-3. Edit $LAMMPSSRC/src/USER-AENET/Install.sh to make sure that it is consistent with the serial library file that will be used (i.e. modify lines like ‘sed -i -e 's/-lgfortran -lm -ldl -laenet -llbfgsb -lopenblas //' ../Makefile.package’ to contain the necessary libraries)
+3. In $LAMMPSSRC/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
+  - Note that if you are using the intel compilers, you may have to recompile the aenet library using ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
 4. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
   - aenet.h to $LAMMPSSRC/lib/aenet/include/
   - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSSRC/lib/aenet/lib/
