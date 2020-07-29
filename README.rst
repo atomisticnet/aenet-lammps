@@ -29,7 +29,7 @@ Building LAMMPS with ænet support
 After compiling the aenet library files and downloading the aenet-LAMMPS interface from this repository:
 
 1. Copy the USER-AENET folder to $LAMMPSSRC/src/ where $LAMMPSSRC is the path to your LAMMPS codebase
-2. Edit $LAMMPSSRC/src/Makefile by adding ‘user-aenet’ to the ‘PACKUSER’ variable
+2. Replace $LAMMPSSRC/src/Makefile with ‘Makefile-aenetlammps‘
 3. In $LAMMPSSRC/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
   - Note that if you are using the intel compilers, you may have to recompile the aenet library using ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
 4. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
