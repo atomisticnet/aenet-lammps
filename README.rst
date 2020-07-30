@@ -5,7 +5,7 @@
 This directory provides all files needed to link the LAMMPS_ molecular
 dynamics code with ``aenetLib``.
 
-The present interface code has been tested with the LAMMPS version released on February 4, 2020 (Dowload_).
+The present interface code has been tested with the LAMMPS version released on February 4, 2020 (Download_).
 
 .. _LAMMPS: https://lammps.sandia.gov/
 .. _Download: https://lammps.sandia.gov/tars/lammps-4Feb20.tar.gz 
