@@ -21,7 +21,7 @@ variable initTemp        equal  300.0                                           
 variable velSeed         equal  4928459                                                 # seed for random number generator
 
 # NVT integrator (Nose-Hoover)
-variable tDamp           equal  1000.0                                                  # thermostat damping factor (fs)
+variable tDamp           equal  1.0                                                     # thermostat damping factor (fs)
 
 # dump xyz trajectory file
 variable intDumpXYZ      equal  4                                                       # xyz dump file interval (timesteps)
@@ -33,7 +33,7 @@ variable nameDumpVelos   string "02_Traj/velocities.xyz"                        
 
 # dump forces trajectory file
 variable intDumpForces    equal 4                                                       # forces dump file interval (timesteps)
-variable nameDumpForces   string "02_Traj/forces.xyz"                                    # forces file name
+variable nameDumpForces   string "02_Traj/forces.xyz"                                   # forces file name
 
 # physical constants
 variable Na              equal 6.02214
@@ -57,7 +57,7 @@ reset_timestep 0
 #
 mass 1 ${mass1}                                                                         # set mass for element 1
 mass 2 ${mass2}                                                                         # set mass for element 2
-pair_style aenet H.25t-25t.ann-03649 O.25t-25t.ann-03649 
+pair_style aenet H.ann O.ann 
 pair_coeff * *
 
 timestep ${dt}                                                                          # set timestep
@@ -72,9 +72,9 @@ thermo ${intThermo}                                                             
 ###############################################################################
 # SIMULATION
 ###############################################################################
-# run at 300K for 100 ps
+# run at 300K for 50 fs
 reset_timestep 0
-variable numSteps        equal  200000                                                  # total number of simulation timesteps (timesteps)
+variable numSteps        equal  100                                                  # total number of simulation timesteps (timesteps)
 variable startTemp       equal  300.0                                                   # starting temperature for thermostat (K)
 variable stopTemp        equal  300.0                                                   # final temperature for thermostat (K)
 velocity all create ${initTemp} ${velSeed}                                              # create initial velocities

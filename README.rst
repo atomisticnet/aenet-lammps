@@ -5,9 +5,9 @@
 This directory provides all files needed to link the LAMMPS_ molecular
 dynamics code with ``aenetLib``.
 
-The present interface code has been tested with LAMMPS version August 7, 2019.
+The present interface code has been tested with the LAMMPS version released on February 4, 2020.
 
-.. _LAMMPS: https://lammps.sandia.gov/
+.. _LAMMPS: https://lammps.sandia.gov/tars/lammps-4Feb20.tar.gz
 
 The interface relies on a serial build of the aenet library for predicting energies and forces and leaves LAMMPS to handle parallelization. Hence the usual MPI and OpenMP implementations of LAMMPS are compatible with this interface.
 
@@ -28,15 +28,15 @@ Building LAMMPS with ænet support
 ---------------------------------
 After compiling the aenet library files and downloading the aenet-LAMMPS interface from this repository:
 
-1. Copy the USER-AENET folder to $LAMMPSSRC/src/ where $LAMMPSSRC is the path to your LAMMPS codebase
-2. Replace $LAMMPSSRC/src/Makefile with ‘Makefile-aenetlammps‘
-3. In $LAMMPSSRC/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
+1. Copy the USER-AENET folder to $LAMMPSROOT/src/ where $LAMMPSROOT is the path to your LAMMPS codebase
+2. Replace $LAMMPSROOT/src/Makefile with ‘Makefile-aenetlammps‘
+3. In $LAMMPSROOT/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
   - Note that if you are using the intel compilers, you may have to recompile the aenet library using ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
-4. Create the folders $LAMMPSSRC/lib/aenet/src and $LAMMPSSRC/lib/aenet/lib and make sure to copy or link over:
-  - aenet.h to $LAMMPSSRC/lib/aenet/include/
-  - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSSRC/lib/aenet/lib/
-5. In $LAMMPSSRC/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
-6. Compile LAMMPS as usual (e.g. go to $LAMMPSSRC and call ‘make mpi’)
+4. Create the folders $LAMMPSROOT/lib/aenet/src and $LAMMPSROOT/lib/aenet/lib and make sure to copy or link over:
+  - aenet.h to $LAMMPSROOT/lib/aenet/include/
+  - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSROOT/lib/aenet/lib/
+5. In $LAMMPSROOT/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
+6. Compile LAMMPS as usual (e.g. go to $LAMMPSROOT and call ‘make mpi’)
 
 
 Running LAMMPS simulations using ænet potentials
@@ -49,7 +49,7 @@ The aenet library files, as well as any other dependencies, need to be properly 
   units metal
   mass 1  1.007825
   mass 2 15.999491
-  pair_style aenet O.25t-25t.ann H.25t-25t.ann
+  pair_style aenet O.ann H.ann
   pair_coeff * *
 
 The user must specify the aenet fits such that the first fit corresponds to element 1 and so on.
