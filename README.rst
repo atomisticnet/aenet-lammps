@@ -2,6 +2,15 @@
 ænet-LAMMPS Interface
 =====================
 
+If you make use of the aenet-LAMMPS interface, please cite the following reference:
+
+M.S. Chen, T. Morawietz, T.E. Markland, N. Artrith,
+AENET-LAMMPS and AENET-TINKER: Interfaces for Accurate and Efficient Molecular Dynamics Simulations with Machine Learning Potentials, in preparation (2020).
+
+The database can be obtained from the Materials Cloud repository, DOI: https://doi.org/10.24435/materialscloud:dx-ct
+
+ænet-LAMMPS
+-------------
 This directory provides all files needed to link the LAMMPS_ molecular
 dynamics code with ``aenetLib``.
 
