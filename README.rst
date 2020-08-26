@@ -42,9 +42,9 @@ After compiling the aenet library files and downloading the aenet-LAMMPS interfa
 2. Replace $LAMMPSROOT/src/Makefile with ‘Makefile-aenetlammps‘
 3. In $LAMMPSROOT/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
   - Note that if you are using the intel compilers, you may have to recompile the aenet library using ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
-4. Create the folders $LAMMPSROOT/lib/aenet/src and $LAMMPSROOT/lib/aenet/lib and make sure to copy or link over:
+4. Create the folders $LAMMPSROOT/lib/aenet/include and $LAMMPSROOT/lib/aenet/lib and make sure to copy or link over:
   - aenet.h to $LAMMPSROOT/lib/aenet/include/
-  - library files (i.e. libaenet.a, libaenet.so, liblbfg.a, liblbfg.so) to $LAMMPSROOT/lib/aenet/lib/
+  - library files (i.e. libaenet.a, libaenet.so, liblbfgsb.a, liblbfgsb.so) to $LAMMPSROOT/lib/aenet/lib/
 5. In $LAMMPSROOT/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
 6. Compile LAMMPS as usual (e.g. go to $LAMMPSROOT and call ‘make mpi’)
 
