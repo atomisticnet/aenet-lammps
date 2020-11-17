@@ -46,7 +46,7 @@ After compiling the aenet library files and downloading the aenet-LAMMPS interfa
   - aenet.h to $LAMMPSROOT/lib/aenet/include/
   - library files (i.e. libaenet.a, libaenet.so, liblbfgsb.a, liblbfgsb.so) to $LAMMPSROOT/lib/aenet/lib/
 5. In $LAMMPSROOT/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
-6. Compile LAMMPS as usual (e.g. go to $LAMMPSROOT and call ‘make mpi’)
+6. Compile LAMMPS as usual (e.g. go to $LAMMPSROOT/src and call ‘make mpi’)
 
 
 Running LAMMPS simulations using ænet potentials
