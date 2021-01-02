@@ -39,14 +39,28 @@ Building LAMMPS with ænet support
 After compiling the aenet library files and downloading the aenet-LAMMPS interface from this repository:
 
 1. Copy the USER-AENET folder to $LAMMPSROOT/src/ where $LAMMPSROOT is the path to your LAMMPS codebase
+
 2. Replace $LAMMPSROOT/src/Makefile with ‘Makefile-aenetlammps‘
+
 3. In $LAMMPSROOT/src/USER-AENET/ you will find multiple ‘Install.sh-*‘ files. Select the file analogous to which makefile you used to compile the aenet library and copy it into a new file in the same directory called ‘Install.sh‘. In other words, if you compiled the aenet library using ‘Makefile.gfortran_serial‘ then you should select ‘Install.sh-gfortran_serial‘.
-  - Note that if you are using the intel compilers, you may have to recompile the aenet library using ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
+  - **Note:** if you are using the Intel compilers, you may have to recompile the aenet library using 
+              ‘Makefile.ifort_serial‘ but editing the makefile so as to remove the ‘-check-bounds‘ flag.
+  - **Note:** if you are using the Intel compilers, you might have to add the `ifcore` library with to the `PKG_LIB` 
+              line in the file `$LAMMPSROOT/src/Makefile.package`.  At the end of the line, add `-lifcore`.
+  - **Note:** it might be desirable to link the ænet libraries statically, so that no environment paths need
+              to be set.  To link statically, change `-laenet -llbfgsb` to 
+              `../../lib/aenet/lib/libaenet.a ../../lib/aenet/lib/liblbfgsb.a` in the file `Makefile.package`
+  
 4. Create the folders $LAMMPSROOT/lib/aenet/include and $LAMMPSROOT/lib/aenet/lib and make sure to copy or link over:
-  - aenet.h to $LAMMPSROOT/lib/aenet/include/
-  - library files (i.e. libaenet.a, libaenet.so, liblbfgsb.a, liblbfgsb.so) to $LAMMPSROOT/lib/aenet/lib/
+  - `aenet.h` to `$LAMMPSROOT/lib/aenet/include/`
+  - library files (i.e. `libaenet.a`, `libaenet.so`, `liblbfgsb.a`, `liblbfgsb.so`) to `$LAMMPSROOT/lib/aenet/lib/`
+  - **Note:** in `aenet.h`, change `_Bool` to `bool` to make the header file compatible with C++
+
 5. In $LAMMPSROOT/src/, run 'make yes-user-aenet' to enable the interface package. Be sure to enable any other packages you want to use as well
+
 6. Compile LAMMPS as usual (e.g. go to $LAMMPSROOT/src and call ‘make mpi’)
+  - **Note:** when compilation with the Intel compilers is desired, use `make intel_cpu_openmpi` or similar.
+              (For a list of available targets, run `make` without any option.)
 
 
 Running LAMMPS simulations using ænet potentials
