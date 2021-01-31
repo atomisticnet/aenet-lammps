@@ -1,0 +1,116 @@
+LAMMPS (4 Feb 2020)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:94)
+  using 1 OpenMP thread(s) per MPI task
+variable Nrun   equal 5  #
+variable Nevery equal 1
+variable T_ext  equal 400.0
+variable seed   equal 123456
+
+#-----------------------------------------------------------------------
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:94)
+  using 1 OpenMP thread(s) per MPI task
+units metal    # eV, Angstrom, g/mol, ps, K, bar
+dimension 3
+boundary p p p
+atom_style atomic
+
+# read initial structure from data file
+read_data POSCAR-16x16x16-786432.data
+  orthogonal box = (0 0 0) to (198.72 198.72 198.72)
+  2 by 2 by 3 MPI processor grid
+  reading atoms ...
+  786432 atoms
+  read_data CPU = 1.22413 secs
+
+# potential
+pair_style aenet H.ann O.ann
+pair_coeff * *
+
+#set carrier species
+#group O type 1
+
+# Configure output of thermodynamic quantities
+#thermo 1
+#thermo_style custom step time temp etotal pe ke
+# thermo_modify norm yes  # normalize extensive quantitites by number of atoms
+
+# EoM integration
+# run_style  verlet
+timestep   0.001  # 1fs, 0.001ps
+
+# Neighbor list
+neighbor 1.0 bin
+neigh_modify once no every 1 delay 0 check yes
+
+# Configure output of thermodynamic quantities
+thermo 1
+thermo_style custom step time temp etotal pe ke # c_msd[4]  v_fitslope
+# thermo_modify norm yes  # normalize extensive quantitites by number of atoms
+
+# save the trajectory in XYZ format
+# dump q1 all xyz 10 dump.xyz       #0.02ps output one structure
+# dump_modify q1 element H O
+
+# NVT simulation with Bussi thermostat
+velocity all create ${T_ext} ${seed} rot yes mom yes dist gaussian
+velocity all create 400 ${seed} rot yes mom yes dist gaussian
+velocity all create 400 123456 rot yes mom yes dist gaussian
+fix 1 all nve
+fix 2 all temp/csvr ${T_ext} ${T_ext} 1.0 ${seed}
+fix 2 all temp/csvr 400 ${T_ext} 1.0 ${seed}
+fix 2 all temp/csvr 400 400 1.0 ${seed}
+fix 2 all temp/csvr 400 400 1.0 123456
+fix 3 all momentum 100 linear 1 1 1
+run ${Nrun}
+run 5
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7.35
+  ghost atom cutoff = 7.35
+  binsize = 3.675, bins = 55 55 55
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair aenet, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 62.4 | 62.4 | 62.41 Mbytes
+Step Time Temp TotEng PotEng KinEng 
+       0            0          400 -1.2306249e+08 -1.2310315e+08    40661.674 
+       1        0.001    398.43771 -1.2306246e+08 -1.2310297e+08    40502.861 
+       2        0.002    397.65801 -1.2306243e+08 -1.2310286e+08    40423.601 
+       3        0.003    403.35362 -1.2306246e+08 -1.2310346e+08    41002.583 
+       4        0.004    413.54113 -1.2306255e+08 -1.2310459e+08    42038.187 
+       5        0.005    417.19608 -1.2306261e+08 -1.2310502e+08    42409.728 
+Loop time of 62.8928 on 12 procs for 5 steps with 786432 atoms
+
+Performance: 0.007 ns/day, 3494.044 hours/ns, 0.080 timesteps/s
+99.6% CPU use with 12 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 62.064     | 62.331     | 62.581     |   2.4 | 99.11
+Neigh   | 0.26436    | 0.26602    | 0.26772    |   0.2 |  0.42
+Comm    | 0.02307    | 0.27415    | 0.54299    |  37.1 |  0.44
+Output  | 0.0013561  | 0.0014279  | 0.0015013  |   0.1 |  0.00
+Modify  | 0.013474   | 0.013561   | 0.013658   |   0.1 |  0.02
+Other   |            | 0.006436   |            |       |  0.01
+
+Nlocal:    65536 ave 65813 max 65254 min
+Histogram: 4 0 0 0 1 3 0 0 0 4
+Nghost:    40402.4 ave 40730 max 40046 min
+Histogram: 4 0 0 0 1 3 0 0 0 4
+Neighs:    0 ave 0 max 0 min
+Histogram: 12 0 0 0 0 0 0 0 0 0
+FullNghs:  1.0841e+07 ave 1.08854e+07 max 1.07918e+07 min
+Histogram: 4 0 0 0 0 4 0 0 0 4
+
+Total # of neighbors = 130091778
+Ave neighs/atom = 165.42
+Neighbor list builds = 1
+Dangerous builds = 0
+Total wall time: 0:01:17
