@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --account=urban
+#SBATCH --account=HPC at CU
 #SBATCH --nodes=8
 #SBATCH --tasks-per-node=12
 #SBATCH --time=1:00:00
@@ -12,5 +12,5 @@ module load intel-parallel-studio/2017
 ulimit -s unlimited
 
 date
-mpiexec -bootstrap slurm /moto/urban/projects/shared/DFT-ANN/Programs/aenet-lammps-2.1.0/lmp_intel_cpu_intelmpi-aenet-2.1.0-fast-intel2017 -in input.lmp > lammps.out
+mpiexec -bootstrap slurm lmp_intel_cpu_intelmpi-aenet-2.1.0-fast-intel2017 -in input.lmp > lammps.out
 date
