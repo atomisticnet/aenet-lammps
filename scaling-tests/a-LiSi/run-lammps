@@ -1,0 +1,16 @@
+#!/bin/sh
+#SBATCH --account=urban
+#SBATCH --nodes=8
+#SBATCH --tasks-per-node=12
+#SBATCH --time=1:00:00
+#SBATCH --mem-per-cpu=10gb
+#SBATCH --threads-per-core=1
+#SBATCH --output=stdout.out
+#SBATCH --error=stderr.out
+
+module load intel-parallel-studio/2017
+ulimit -s unlimited
+
+date
+mpiexec -bootstrap slurm /moto/urban/projects/shared/DFT-ANN/Programs/aenet-lammps-2.1.0/lmp_intel_cpu_intelmpi-aenet-2.1.0-fast-intel2017 -in input.lmp > lammps.out
+date
