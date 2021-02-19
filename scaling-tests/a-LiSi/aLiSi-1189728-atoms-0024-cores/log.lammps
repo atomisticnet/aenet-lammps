@@ -1,0 +1,113 @@
+LAMMPS (4 Feb 2020)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:94)
+  using 1 OpenMP thread(s) per MPI task
+variable Nrun   equal 5  #
+variable Nevery equal 1
+variable T_ext  equal 500.0
+variable seed   equal 123456
+
+#-----------------------------------------------------------------------
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:94)
+  using 1 OpenMP thread(s) per MPI task
+units metal    # eV, Angstrom, g/mol, ps, K, bar
+dimension 3
+boundary p p p
+atom_style atomic
+
+# read initial structure from data file
+read_data aLiSi.data
+  orthogonal box = (0 0 0) to (238.72 284.328 270.208)
+  2 by 4 by 3 MPI processor grid
+  reading atoms ...
+  1189728 atoms
+  read_data CPU = 0.805095 secs
+
+# potential
+pair_style aenet Li.ann Si.ann
+pair_coeff * *
+
+#set carrier species
+#group Li type 1
+
+# Configure output of thermodynamic quantities
+#thermo 1
+#thermo_style custom step time temp etotal pe ke
+# thermo_modify norm yes  # normalize extensive quantitites by number of atoms
+
+# EoM integration
+# run_style  verlet
+timestep   0.001  # 1fs, 0.001ps
+
+# Neighbor list
+neighbor 1.0 bin
+neigh_modify once no every 1 delay 0 check yes
+
+# Configure output of thermodynamic quantities
+thermo 1
+thermo_style custom step time temp etotal pe ke # c_msd[4]  v_fitslope
+# thermo_modify norm yes  # normalize extensive quantitites by number of atoms
+
+
+# NVT simulation with Bussi thermostat
+velocity all create ${T_ext} ${seed} rot yes mom yes dist gaussian
+velocity all create 500 ${seed} rot yes mom yes dist gaussian
+velocity all create 500 123456 rot yes mom yes dist gaussian
+fix 1 all nve
+fix 2 all temp/csvr ${T_ext} ${T_ext} 1.0 ${seed}
+fix 2 all temp/csvr 500 ${T_ext} 1.0 ${seed}
+fix 2 all temp/csvr 500 500 1.0 ${seed}
+fix 2 all temp/csvr 500 500 1.0 123456
+fix 3 all momentum 100 linear 1 1 1
+run ${Nrun}
+run 5
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 9
+  ghost atom cutoff = 9
+  binsize = 4.5, bins = 54 64 61
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair aenet, perpetual
+      attributes: full, newton on
+      pair build: full/bin/atomonly
+      stencil: full/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 52.04 | 52.3 | 52.43 Mbytes
+Step Time Temp TotEng PotEng KinEng 
+       0            0          500   -3470612.6   -3547504.8    76892.142 
+       1        0.001    500.36747   -3470607.8   -3547556.4    76948.654 
+       2        0.002    501.39699   -3470606.9   -3547713.9    77106.977 
+       3        0.003    503.04126   -3470610.5   -3547970.4    77359.841 
+       4        0.004     505.2553     -3470614   -3548314.3    77700.325 
+       5        0.005    507.77788   -3470619.9   -3548708.1    78088.257 
+Loop time of 41.802 on 24 procs for 5 steps with 1189728 atoms
+
+Performance: 0.010 ns/day, 2322.332 hours/ns, 0.120 timesteps/s
+99.7% CPU use with 24 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 41.077     | 41.464     | 41.771     |   3.3 | 99.19
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.013038   | 0.3198     | 0.70704    |  37.0 |  0.77
+Output  | 0.00094938 | 0.00099879 | 0.0011251  |   0.0 |  0.00
+Modify  | 0.010459   | 0.011343   | 0.011712   |   0.3 |  0.03
+Other   |            | 0.005633   |            |       |  0.01
+
+Nlocal:    49572 ave 49815 max 49329 min
+Histogram: 8 0 0 0 0 8 0 0 0 8
+Nghost:    37846 ave 38089 max 37603 min
+Histogram: 8 0 0 0 0 8 0 0 0 8
+Neighs:    0 ave 0 max 0 min
+Histogram: 24 0 0 0 0 0 0 0 0 0
+FullNghs:  9.06876e+06 ave 9.11444e+06 max 9.02308e+06 min
+Histogram: 8 0 0 0 0 8 0 0 0 8
+
+Total # of neighbors = 217650240
+Ave neighs/atom = 182.941
+Neighbor list builds = 0
+Dangerous builds = 0
+Total wall time: 0:00:51
