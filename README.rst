@@ -78,7 +78,7 @@ The aenet library files, as well as any other dependencies, need to be properly 
 
 The user must specify the aenet fits such that the first fit corresponds to element 1 and so on.
 
-The parameter files (*.ann files) need to be enumerated in a specific order. In the example above element 1 is designated to be hydrogen and element 2 is oxygen. Consequently, the aenet parameter file for hydrogen (i.e. H.ann) needs to be specified first and then followed by the parameter file for hydrogen.
+The parameter files (*.ann files) need to be enumerated in a specific order. In the example above element 1 is designated to be hydrogen and element 2 is oxygen. Consequently, the aenet parameter file for hydrogen (i.e. H.ann) needs to be specified first and then followed by the parameter file for oxygen.
 
 The selected LAMMPS units should match the units of the training data that was fitted by aenet. In the example above, ‘metal’ units are used meaning that the aenet potentials were fitted to training data for which the energies were reported in electron-volts and the positions in Angstroms. If instead the training data used Hartrees and Bohrs, then the corresponding LAMMPS units should be ‘electron’.
 
