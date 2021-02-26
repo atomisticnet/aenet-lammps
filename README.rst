@@ -73,7 +73,7 @@ The aenet library files, as well as any other dependencies, need to be properly 
   units metal
   mass 1  1.007825
   mass 2 15.999491
-  pair_style aenet O.ann H.ann
+  pair_style aenet H.ann O.ann
   pair_coeff * *
 
 The user must specify the aenet fits such that the first fit corresponds to element 1 and so on.
