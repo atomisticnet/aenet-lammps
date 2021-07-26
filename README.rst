@@ -4,8 +4,8 @@
 
 If you make use of the aenet-LAMMPS interface, please cite the following reference:
 
-M.S. Chen, T. Morawietz, T.E. Markland, N. Artrith,
-AENET-LAMMPS and AENET-TINKER: Interfaces for Accurate and Efficient Molecular Dynamics Simulations with Machine Learning Potentials, in preparation (2020).
+M.S. Chen, T. Morawietz, H. Mori, T.E. Markland, and N. Artrith,
+AENET-LAMMPS and AENET-TINKER: Interfaces for Accurate and Efficient Molecular Dynamics Simulations with Machine Learning Potentials, (2021):  https://arxiv.org/abs/2107.11311.
 
 The database can be obtained from the Materials Cloud repository, DOI: https://doi.org/10.24435/materialscloud:dx-ct
 
@@ -81,4 +81,10 @@ The user must specify the aenet fits such that the first fit corresponds to elem
 The parameter files (*.ann files) need to be enumerated in a specific order. In the example above element 1 is designated to be hydrogen and element 2 is oxygen. Consequently, the aenet parameter file for hydrogen (i.e. H.ann) needs to be specified first and then followed by the parameter file for oxygen.
 
 The selected LAMMPS units should match the units of the training data that was fitted by aenet. In the example above, ‘metal’ units are used meaning that the aenet potentials were fitted to training data for which the energies were reported in electron-volts and the positions in Angstroms. If instead the training data used Hartrees and Bohrs, then the corresponding LAMMPS units should be ‘electron’.
+
+The notebooks can be obtained from the provided GitHub links [1] and can also be run online via Google Colaboratory [2]
+aenet-lammps (tutorial of short MD simulation liquid bulk water): 
+[1] https://github.com/atomisticnet/aenet-lammps/tree/master/tutorial 
+[2] https://colab.research.google.com/drive/1Km8JVFM2DCeElAeE2n_WgMgLa7IU_IFh?usp=sharing 
+
 
