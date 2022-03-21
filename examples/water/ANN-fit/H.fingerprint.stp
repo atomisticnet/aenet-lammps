@@ -1,0 +1,14 @@
+DESCR
+  Structural fingerprint setup for H in water.
+END DESCR
+
+ATOM H
+
+ENV  2
+H
+O
+
+RMIN 0.4d0
+
+BASIS type=Chebyshev
+radial_Rc = 12.000 radial_N = 20 angular_Rc = 6.000 angular_N = 4
