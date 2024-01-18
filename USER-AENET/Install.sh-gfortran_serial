@@ -37,17 +37,17 @@ done
 if (test $1 = 1) then
 
   if (test -e ../Makefile.package) then
-    sed -i -e 's/-lm -ldl -laenet -llbfgsb //' ../Makefile.package
+    sed -i -e 's/-lm -ldl -laenet -llbfgsb -llapack -lblas //' ../Makefile.package
     sed -i -e 's/[^ \t]*aenet[^ \t]* //' ../Makefile.package
     sed -i -e 's|^PKG_INC =[ \t]*|&-I../../lib/aenet/include |' ../Makefile.package
     sed -i -e 's|^PKG_PATH =[ \t]*|&-L../../lib/aenet/lib |' ../Makefile.package
-    sed -i -e 's|^PKG_LIB =[ \t]*|&-lm -ldl -laenet -llbfgsb |' ../Makefile.package
+    sed -i -e 's|^PKG_LIB =[ \t]*|&-lm -ldl -laenet -llbfgsb -llapack -lblas |' ../Makefile.package
   fi
 
 elif (test $1 = 0) then
 
   if (test -e ../Makefile.package) then
-    sed -i -e 's/-lm -ldl -laenet -llbfgsb //' ../Makefile.package
+    sed -i -e 's/-lm -ldl -laenet -llbfgsb -llapack -lblas //' ../Makefile.package
     sed -i -e 's/[^ \t]*aenet[^ \t]* //' ../Makefile.package
   fi
 
