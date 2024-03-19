@@ -1,0 +1,99 @@
+#========== Basic Settings ==========
+
+units 		metal
+dimension 	3
+boundary		p p p
+atom_style	atomic
+atom_modify	map yes
+variable		dt equal 0.001
+timestep		${dt}
+
+#========== Model ==========
+
+read_data		LiSi.data
+variable		voll equal 1.6e6
+variable		Vol equal vol
+
+#========== Force Fields ==========
+
+pair_style		aenet Li.pytorch.nn Si.pytorch.nn
+pair_coeff		* *
+
+#========== Neighbor Lists ==========
+
+neighbor		2.0 bin
+neigh_modify	every 10 delay 10 check yes
+
+#========== Computes ==========
+
+compute		1 all stress/atom NULL
+compute		2 all reduce sum c_1[1] c_1[2] c_1[3]
+
+#========== Energy Minimization ==========
+
+min_style		cg
+minimize		1.0e-7 1.0e-7 1000 1000
+
+#========== Equalibration ==========
+
+variable		Tdamp equal "v_dt*100"
+fix		1 all nvt temp 300.0 300.0 ${Tdamp}
+thermo		100
+thermo_style	custom step pxx pyy pzz temp press pe ke lx ly lz c_2[1] c_2[2] c_2[3]
+dump		1 all xyz 100 relax.xyz
+run		20000
+write_restart	restart_hpc.20000
+unfix		1
+undump		1
+variable		tem equal "ly"
+variable		L0 equal ${tem}
+
+#========== Deformation ==========
+
+reset_timestep	0
+#read_restart	restart.10000
+variable		Pdamp equal "v_dt*1000"
+fix		1 all npt temp 300.0 300.0 ${Tdamp} x 1 1 ${Pdamp} z 1 1 ${Pdamp} drag 1
+variable		srate equal 1.0e10
+variable		srate1 equal "v_srate/1.0e12"
+
+fix		add1 all ave/time 1 10 10 c_2[1] c_2[2] c_2[3]
+#fix		add2 all ave/time 1 10 10 v_Vol
+#fix		add3 all ave/time 1 10 10 c_1[1] c_1[2] c_1[3]
+
+
+fix		2 all deform 1 y erate ${srate1} units box remap x
+
+#========== Outputs ==========
+
+variable		ConvCoeff equal 1.0e-4
+variable		sigmaxx1 equal "c_2[1]/v_voll*v_ConvCoeff"
+variable		sigmayy1 equal "c_2[2]/v_voll*v_ConvCoeff"
+variable		sigmazz1 equal "c_2[3]/v_voll*v_ConvCoeff"
+
+variable		sigmaxx2 equal "f_add1[1]/v_Vol*v_ConvCoeff"
+variable		sigmayy2 equal "f_add1[2]/v_Vol*v_ConvCoeff"
+variable		sigmazz2 equal "f_add1[3]/v_Vol*v_ConvCoeff"
+
+
+variable		strain2perDT equal "1.0e10*v_dt*1.0e-12"
+variable		strain2 equal "v_strain2perDT*(step)"
+
+variable		strain1 equal "(ly-v_L0)/v_L0"
+variable		p1 equal "-pxx/10000"
+variable		p2 equal "-pyy/10000"
+variable		p3 equal "-pzz/10000"
+
+thermo		200
+thermo_style	custom step temp v_strain1 v_p1 v_p2 v_p3 ke pe press ly v_strain2 v_sigmaxx1 v_sigmayy1 v_sigmazz1 v_sigmaxx2 v_sigmayy2 v_sigmazz2
+dump		1 all atom 200 tensile_movie.lammpstrj
+
+#dump		2 all custom 5000 dump.stress.* id type x y z f_add3[1] f_add3[2] f_add3[3]
+
+fix		3 all print 10 "${strain1} ${p1} ${p2} ${p3}" file strain1-stress1.txt screen no
+fix		4 all print 10 "${strain2} ${sigmaxx1} ${sigmayy1} ${sigmazz1}" file strain2-stress2.txt screen no
+fix		42 all print 10 "${strain2} ${sigmaxx2} ${sigmayy2} ${sigmazz2}" file strain3-stress3.txt screen no
+run		60000
+write_restart	restart_hpc.deform.60000
+
+
