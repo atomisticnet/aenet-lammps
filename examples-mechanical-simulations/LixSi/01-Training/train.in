@@ -1,0 +1,25 @@
+TRAININGSET LiSi.train.ascii
+TESTPERCENT 10
+ITERATIONS  10000
+ITERWRITE   1
+BATCHSIZE   128
+
+NPSEED 1
+PHSEED 2
+
+MEMORY_MODE cpu
+
+SAVE_ENERGIES
+
+VERBOSE
+
+METHOD
+method=adamw   lr=0.0001
+
+REGULARIZATION 0.001
+
+NETWORKS
+! atom   network         hidden
+! types  file-name       layers  nodes:activation
+  Li     Li.pytorch.nn    2    25:tanh    25:tanh
+  Si     Si.pytorch.nn    2    25:tanh    25:tanh
