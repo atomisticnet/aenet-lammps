@@ -19,7 +19,7 @@ dynamics code with ``aenetLib``.
 The present interface code has been tested with the LAMMPS version released on February 4, 2020 (Download_).
 
 .. _LAMMPS: https://lammps.sandia.gov/
-.. _Download: https://lammps.sandia.gov/tars/lammps-4Feb20.tar.gz 
+.. _Download: https://download.lammps.org/tars/lammps-4Feb2020.tar.gz
 
 The interface relies on a serial build of the aenet library for predicting energies and forces and leaves LAMMPS to handle parallelization. Hence the usual MPI and OpenMP implementations of LAMMPS are compatible with this interface.
 
